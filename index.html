@@ -4,54 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bar Chart - Movies</title>
+    <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            text-align: center;
-            background: linear-gradient(to right, #2c3e50, #4ca1af);
-            color: white;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-        }
-        .tabs {
-            margin-bottom: 20px;
-        }
-        .tab-button {
-            padding: 12px 24px;
-            margin: 5px;
-            cursor: pointer;
-            background-color: #1abc9c;
-            color: white;
-            border: none;
-            border-radius: 25px;
-            transition: 0.3s;
-            font-size: 16px;
-        }
-        .tab-button:hover, .tab-button.active {
-            background-color: #16a085;
-        }
-        .chart-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            max-width: 900px;
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-        }
-        canvas {
-            width: 100% !important;
-            height: auto !important;
-        }
-    </style>
 </head>
 <body>
     <h1>Top Box Office Movies by Year Range</h1>
@@ -64,74 +18,6 @@
     <div class="chart-container">
         <canvas id="barChart"></canvas>
     </div>
-    <script>
-        let moviesData;
-        fetch('films.json')
-            .then(response => response.json())
-            .then(movies => {
-                moviesData = movies;
-                showChart('2005-2009');
-            })
-            .catch(error => console.error('Error loading films.json:', error));
-
-        function showChart(period) {
-            const periods = {
-                "2005-2009": [2005, 2009],
-                "2010-2014": [2010, 2014],
-                "2015-2019": [2015, 2019],
-                "2020-2024": [2020, 2024]
-            };
-
-            const range = periods[period];
-            const filteredMovies = moviesData.filter(movie => movie.release_year >= range[0] && movie.release_year <= range[1]);
-            
-            const labels = filteredMovies.map(movie => movie.title);
-            const boxOfficeData = filteredMovies.map(movie => movie.box_office);
-            const directors = filteredMovies.map(movie => movie.director);
-            const releaseYears = filteredMovies.map(movie => movie.release_year);
-
-            document.querySelectorAll('.tab-button').forEach(button => button.classList.remove('active'));
-            document.querySelector(`button[onclick="showChart('${period}')"]`).classList.add('active');
-
-            const ctx = document.getElementById("barChart").getContext("2d");
-            if (window.myChart) window.myChart.destroy();
-            window.myChart = new Chart(ctx, {
-                type: "bar",
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: "Box Office Revenue ($)",
-                        data: boxOfficeData,
-                        backgroundColor: "#1abc9c",
-                        borderColor: "#16a085",
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function(tooltipItem) {
-                                    let index = tooltipItem.dataIndex;
-                                    return [
-                                        `Box Office: $${boxOfficeData[index].toLocaleString()}`,
-                                        `Director: ${directors[index]}`,
-                                        `Year: ${releaseYears[index]}`
-                                    ];
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-        }
-    </script>
+    <script src="scripts.js"></script>
 </body>
 </html>
